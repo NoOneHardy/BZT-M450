@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    {% block head %}
+    <title>{% block title %}Wetter{% endblock %} - M450</title>
+    {% endblock %}
+    <link rel="stylesheet" href="/resources/styles.css" />
+    {% block pagestyle %}
+    {% endblock %}
+  </head>
+  <body>
+    <div class="body">
+      <header>
+        {% block header %}
+        <img
+          alt="Wetter-Logo"
+          src="/resources/weather-symbol.svg"
+          width="150"
+        />
+        M450 - Wetter-App {% endblock %}
+      </header>
+      <main>{% block content %}{% endblock %}</main>
+      <footer>
+        {% block footer %} &copy; {{ 'now'|date('Y') }} M450 {% endblock %}
+      </footer>
+    </div>
+    {% block bodyscripts %}
+    {% endblock %}
+  </body>
+</html>

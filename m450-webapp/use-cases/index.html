@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>M450 - Use-Cases f&uuml;r Wetter-Applikation</title>
+        <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+        
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+        
+    </head>
+    <body class="vscode-body vscode-light">
+        <h1 id="m450-use-cases-für-wetter-applikation">M450 - Use-Cases für Wetter-Applikation</h1>
+<p>Im Folgenden sind die Anforderungen an die gewünschte Wetter-Applikation
+in Form von Use-Cases / Use-Case-Beschreibungen notiert.</p>
+<ul>
+<li><a href="#use-case-beschreibungen">Use-Case-Beschreibungen</a>
+<ul>
+<li><a href="#01-wetterdaten-von-api-importieren">01 - Wetterdaten von API importieren</a>
+<ul>
+<li><a href="#essentielle-schritte">Essentielle Schritte</a></li>
+<li><a href="#erweiterungen">Erweiterungen</a></li>
+</ul>
+</li>
+<li><a href="#02-luftqualit%C3%A4tsdaten-von-api-importieren">02 - Luftqualitätsdaten von API importieren</a>
+<ul>
+<li><a href="#essentielle-schritte-1">Essentielle Schritte</a></li>
+<li><a href="#erweiterungen-1">Erweiterungen</a></li>
+</ul>
+</li>
+<li><a href="#03-wetter-am-zeitpunktort-x-abrufen">03 - Wetter am Zeitpunkt/Ort X abrufen</a>
+<ul>
+<li><a href="#essentielle-schritte-2">Essentielle Schritte</a></li>
+<li><a href="#erweiterungen-2">Erweiterungen</a></li>
+</ul>
+</li>
+<li><a href="#04-durchschnittswerte-zwischen-2-daten-abrufen">04 - Durchschnittswerte zwischen 2 Daten abrufen</a>
+<ul>
+<li><a href="#essentielle-schritte-3">Essentielle Schritte</a></li>
+<li><a href="#erweiterungen-3">Erweiterungen</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<img alt="Use-Cases" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBjb250ZW50U3R5bGVUeXBlPSJ0ZXh0L2NzcyIgaGVpZ2h0PSI1NDNweCIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSIgc3R5bGU9IndpZHRoOjQyMXB4O2hlaWdodDo1NDNweDtiYWNrZ3JvdW5kOiNGRkZGRkY7IiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCA0MjEgNTQzIiB3aWR0aD0iNDIxcHgiIHpvb21BbmRQYW49Im1hZ25pZnkiPjxkZWZzLz48Zz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZm9udC13ZWlnaHQ9ImJvbGQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMjI1IiB4PSI5MSIgeT0iMjMuNTM1MiI+TTQ1MCAtIFVzZS1DYXNlcyBXZXR0ZXItQXBwPC90ZXh0PjwhLS1jbHVzdGVyIFdldHRlci1BcHAtLT48ZyBpZD0iY2x1c3Rlcl9XZXR0ZXItQXBwIj48cmVjdCBmaWxsPSJub25lIiBoZWlnaHQ9IjQ5MyIgcng9IjIuNSIgcnk9IjIuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxLjA7IiB3aWR0aD0iMzM0IiB4PSI4MSIgeT0iNDQuNDg4MyIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBmb250LXdlaWdodD0iYm9sZCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI4NCIgeD0iMjA2IiB5PSI2MC4wMjM0Ij5XZXR0ZXItQXBwPC90ZXh0PjwvZz48ZyBpZD0iZWxlbV9pbXBvcnRfd2VhdGhlciI+PGVsbGlwc2UgY3g9IjI0Ny44MTM1IiBjeT0iNDA0LjI1MSIgZmlsbD0iI0YxRjFGMSIgcng9IjEyNi44MTM1IiByeT0iMjcuNzYyNyIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMTcyIiB4PSIxNTguODEzNSIgeT0iNDAwLjAyNDQiPjAxIC0gV2V0dGVyZGF0ZW4gdm9uIEFQSTwvdGV4dD48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI4MSIgeD0iMjA0LjMxMzUiIHk9IjQxNi41MTI3Ij5pbXBvcnRpZXJlbjwvdGV4dD48L2c+PGcgaWQ9ImVsZW1faW1wb3J0X2FpciI+PGVsbGlwc2UgY3g9IjI0Ny44ODEzIiBjeT0iNDk0LjI2NDUiIGZpbGw9IiNGMUYxRjEiIHJ4PSIxMjEuODgxMyIgcnk9IjI2Ljc3NjMiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjE1OCIgeD0iMTY1Ljg4MTMiIHk9IjQ5MC4wMzgiPjAyIC0gTHVmdHF1YWxpdMOkdHNkYXRlbjwvdGV4dD48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIxMzYiIHg9IjE3Ni44ODEzIiB5PSI1MDYuNTI2MyI+dm9uIEFQSSBpbXBvcnRpZXJlbjwvdGV4dD48L2c+PGcgaWQ9ImVsZW1fZGF0YV9wb2ludCI+PGVsbGlwc2UgY3g9IjI0Ny44NjE5IiBjeT0iMzA4LjU2MDciIGZpbGw9IiNGMUYxRjEiIHJ4PSIxNTAuODYxOSIgcnk9IjMyLjU3MjQiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjI3MiIgeD0iMTExLjg2MTkiIHk9IjMxMS44NTE3Ij4wMyAtIFdldHRlciBhbSBaZWl0cHVua3QvT3J0IFggYWJydWZlbjwvdGV4dD48L2c+PGcgaWQ9ImVsZW1fZGF0YV9hdmciPjxlbGxpcHNlIGN4PSIyNDguMTU3OCIgY3k9IjExMi41MTk4IiBmaWxsPSIjRjFGMUYxIiByeD0iMTUwLjY1NzgiIHJ5PSIzMi41MzE2IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIyMzMiIHg9IjEzMS42NTc4IiB5PSIxMDcuNTY2NyI+MDQgLSBEdXJjaHNjaG5pdHRzd2VydGUgendpc2NoZW48L3RleHQ+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMTExIiB4PSIxOTIuNjU3OCIgeT0iMTI0LjA1NSI+MiBEYXRlbiBhYnJ1ZmVuPC90ZXh0PjwvZz48ZyBpZD0iZWxlbV9kYXRhX3RhYmxlIj48ZWxsaXBzZSBjeD0iMjQ3Ljg2NTMiIGN5PSIyMTAuNTYxMyIgZmlsbD0iI0YxRjFGMSIgcng9IjE0MC44NjUzIiByeT0iMzAuNTczMSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMjA5IiB4PSIxNDMuMzY1MyIgeT0iMjA1LjYwODIiPjA1IC0gVGFiZWxsYXJpc2NoZSBUYWdlc2RhdGVuPC90ZXh0Pjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjE3OCIgeD0iMTU4Ljg2NTMiIHk9IjIyMi4wOTY1Ij56d2lzY2hlbiAyIERhdGVuIGFicnVmZW48L3RleHQ+PC9nPjwhLS1lbnRpdHkgVXNlci0tPjxnIGlkPSJlbGVtX1VzZXIiPjxlbGxpcHNlIGN4PSIyMS41IiBjeT0iMTgwLjk4ODMiIGZpbGw9IiNGMUYxRjEiIHJ4PSI4IiByeT0iOCIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7Ii8+PHBhdGggZD0iTTIxLjUsMTg4Ljk4ODMgTDIxLjUsMjE1Ljk4ODMgTTguNSwxOTYuOTg4MyBMMzQuNSwxOTYuOTg4MyBNMjEuNSwyMTUuOTg4MyBMOC41LDIzMC45ODgzIE0yMS41LDIxNS45ODgzIEwzNC41LDIzMC45ODgzICIgZmlsbD0ibm9uZSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMzEiIHg9IjYiIHk9IjI0Ni4wMjM0Ij5Vc2VyPC90ZXh0PjwvZz48IS0tZW50aXR5IFplaXQtLT48ZyBpZD0iZWxlbV9aZWl0Ij48ZWxsaXBzZSBjeD0iMjEuNSIgY3k9IjQxOS45ODgzIiBmaWxsPSIjRjFGMUYxIiByeD0iOCIgcnk9IjgiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIvPjxwYXRoIGQ9Ik0yMS41LDQyNy45ODgzIEwyMS41LDQ1NC45ODgzIE04LjUsNDM1Ljk4ODMgTDM0LjUsNDM1Ljk4ODMgTTIxLjUsNDU0Ljk4ODMgTDguNSw0NjkuOTg4MyBNMjEuNSw0NTQuOTg4MyBMMzQuNSw0NjkuOTg4MyAiIGZpbGw9Im5vbmUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjI1IiB4PSI5IiB5PSI0ODUuMDIzNCI+WmVpdDwvdGV4dD48L2c+PCEtLWxpbmsgWmVpdCB0byBpbXBvcnRfd2VhdGhlci0tPjxnIGlkPSJsaW5rX1plaXRfaW1wb3J0X3dlYXRoZXIiPjxwYXRoIGQ9Ik0zNS4yMSw0NDYuOTM4MyBDNTcuOTQsNDQyLjM4ODMgMTA3LjQxLDQzMi40NjgzIDE1Mi44Myw0MjMuMzY4MyAiIGZpbGw9Im5vbmUiIGlkPSJaZWl0LWltcG9ydF93ZWF0aGVyIiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjEuMDsiLz48L2c+PCEtLWxpbmsgWmVpdCB0byBpbXBvcnRfYWlyLS0+PGcgaWQ9ImxpbmtfWmVpdF9pbXBvcnRfYWlyIj48cGF0aCBkPSJNMzUuMjEsNDUyLjAzODMgQzU4LjU0LDQ1Ni43MDgzIDExMC4wNSw0NjcuMDM4MyAxNTYuNDMsNDc2LjMzODMgIiBmaWxsPSJub25lIiBpZD0iWmVpdC1pbXBvcnRfYWlyIiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjEuMDsiLz48L2c+PCEtLWxpbmsgVXNlciB0byBkYXRhX3BvaW50LS0+PGcgaWQ9ImxpbmtfVXNlcl9kYXRhX3BvaW50Ij48cGF0aCBkPSJNMzcuMjQsMjI4LjI0ODMgQzQ2LjU0LDIzOC40MTgzIDU5LjM1LDI1MC42NzgzIDczLDI1OC40ODgzIEM5Mi45MSwyNjkuODg4MyAxMTUuNjIsMjc4Ljg0ODMgMTM3LjksMjg1LjgzODMgIiBmaWxsPSJub25lIiBpZD0iVXNlci1kYXRhX3BvaW50IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjEuMDsiLz48L2c+PCEtLWxpbmsgVXNlciB0byBkYXRhX2F2Zy0tPjxnIGlkPSJsaW5rX1VzZXJfZGF0YV9hdmciPjxwYXRoIGQ9Ik0zNy4yNCwxOTIuNzI4MyBDNDYuNTQsMTgyLjU1ODMgNTkuMzUsMTcwLjI5ODMgNzMsMTYyLjQ4ODMgQzkzLjA1LDE1MS4wMDgzIDExNS45MywxNDEuOTk4MyAxMzguMzYsMTM0Ljk4ODMgIiBmaWxsPSJub25lIiBpZD0iVXNlci1kYXRhX2F2ZyIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxLjA7Ii8+PC9nPjwhLS1saW5rIFVzZXIgdG8gZGF0YV90YWJsZS0tPjxnIGlkPSJsaW5rX1VzZXJfZGF0YV90YWJsZSI+PHBhdGggZD0iTTM3LjIzLDIxMC40ODgzIEM1Mi41OSwyMTAuNDg4MyA3OC4zNiwyMTAuNDg4MyAxMDYuNjYsMjEwLjQ4ODMgIiBmaWxsPSJub25lIiBpZD0iVXNlci1kYXRhX3RhYmxlIiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjEuMDsiLz48L2c+PCEtLVNSQz1bVFA3MUppQ20zOFJGdjJjaXQybDZzMXZXT1hTYTQxbjA4M0hmeVpndFpTWkl1aFloMUU5alUxRFVaQUhUS1JqZkhfX25femNfOHFPaVdSd1ZwSVVHbUJFZHYwT3pVTldYNFU5YUtMTFFNU2U0ZjBHc1VJNm1ES29mY0Q4ZlhRY0szM2d1TUZWNTZuZEhJaUtVVDdiYTNyM21mSXZnSnNhTzBOZm81SVBzWnJpS1NoMGw3SW1VUnJWRXhBZ0luSDJKcXUwVWtkaFQ0NGYxRjRIQzAtQWtwa0laSGNsYXpxVHlZcmd2MG1sRWVEMkNDRFZfY20zazg0UWVRbFNrYm15aXkwZ3V1SmV4LTBDVXJyTGZkMHB6aS0xVnJmbU1GWXNTNFY0RGlIMXlEWU84U1BxZkJEazg5b1pTdnFGR0Y4MlVTNEZNOGhWVUtFTktYLWZ2UzFPZGtCNmFsZk1BNkkxOVphenQ5Q1NwbkQtQnFZM1BJOGVSWmVIa25YeTBdLS0+PC9nPjwvc3ZnPg==" width="400">
+<hr>
+<h2 id="use-case-beschreibungen">Use-Case-Beschreibungen</h2>
+<h3 id="01-wetterdaten-von-api-importieren">01 - Wetterdaten von API importieren</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Ziel</strong></td>
+<td>Ein Datenpunkt mit den aktuellen Wetterdaten ist in der Datenbank-Tabelle <code>weather</code> gespeichert.</td>
+</tr>
+<tr>
+<td><strong>Akteure</strong></td>
+<td>Zeit, User</td>
+</tr>
+<tr>
+<td><strong>Auslöser</strong></td>
+<td>* Zeit: der Vorgang wird zeitgesteuert / periodisch ausgelöst <br>* User: der Benutzer löst den Vorgang manuell einmalig aus</td>
+</tr>
+<tr>
+<td><strong>Nachbedingung</strong></td>
+<td>Die Tabelle <code>weather</code> enthält einen neuen Eintrag mit den aktuellen Daten für den Ort.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="essentielle-schritte">Essentielle Schritte</h4>
+<ol>
+<li>Ein Benutzer oder ein zeitgesteuerter Prozess stösst das Wetter-Import-Script an (Konsole)</li>
+<li>Als Input-Parameter wird eine Postleitzahl mitgegeben</li>
+<li>Das Script holt sich die aktuellen Wetterdaten von <a href="https://api.openweathermap.org/data/2.5/weather">https://api.openweathermap.org/data/2.5/weather</a>
+zu dieser PLZ</li>
+<li>Das Script parst die Daten und speichert die Werte in der Tabelle <code>weather</code>.</li>
+<li>Folgende Werte werden festgehalten:
+<ul>
+<li>Zeitstempel der Messung</li>
+<li>Land</li>
+<li>PLZ, Ort</li>
+<li>Koordinaten</li>
+<li>Wetter-Beschreibung</li>
+<li>Icon</li>
+<li>Temperatur aktuell, Tages-Minimum/Maximum</li>
+<li>gefühlte Temperatur</li>
+<li>Luftdruck, Luftfeuchtigkeit</li>
+<li>Angaben zum Wind</li>
+<li>Sonnen-Auf- und Untergangszeit</li>
+</ul>
+</li>
+</ol>
+<h4 id="erweiterungen">Erweiterungen</h4>
+<p>2a. Es wird kein Input-Parameter mitgegeben: Der Import bricht mit einem Fehler ab.</p>
+<p>3a. Die API kann nicht abgefragt werden: Der Import bricht mit einem Fehler ab.</p>
+<hr>
+<h3 id="02-luftqualitätsdaten-von-api-importieren">02 - Luftqualitätsdaten von API importieren</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Ziel</strong></td>
+<td>Ein Datenpunkt mit den aktuellen Luftqualitätsdaten ist in der Datenbank-Tabelle <code>air_quality</code> gespeichert.</td>
+</tr>
+<tr>
+<td><strong>Akteure</strong></td>
+<td>Zeit, User</td>
+</tr>
+<tr>
+<td><strong>Auslöser</strong></td>
+<td>* Zeit: der Vorgang wird zeitgesteuert / periodisch ausgelöst <br>* User: der Benutzer löst den Vorgang manuell einmalig aus</td>
+</tr>
+<tr>
+<td><strong>Nachbedingung</strong></td>
+<td>Die Tabelle <code>air_quality</code> enthält einen neuen Eintrag mit den aktuellen Daten für den Ort.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="essentielle-schritte-1">Essentielle Schritte</h4>
+<ol>
+<li>Ein Benutzer oder ein zeitgesteuerter Prozess stösst das Import-Script an (Konsole)</li>
+<li>Als Input-Parameter wird eine Postleitzahl mitgegeben</li>
+<li>Das Script holt sich die aktuellen Luftqualitätsdaten von <a href="http://api.openweathermap.org/data/2.5/air_pollution">http://api.openweathermap.org/data/2.5/air_pollution</a>
+zu dieser PLZ</li>
+<li>Das Script parst die Daten und speichert die Werte in der Tabelle <code>air_quality</code>.</li>
+<li>Folgende Werte werden festgehalten:
+<ul>
+<li>Zeitstempel der Messung</li>
+<li>Land</li>
+<li>PLZ, Ort</li>
+<li>Luftqualitäts-Index</li>
+<li>Partikelzahlen (ug/m3) für:
+<ul>
+<li>CO</li>
+<li>NO</li>
+<li>NO2</li>
+<li>O3</li>
+<li>SO2</li>
+<li>PM2_5</li>
+<li>PM10</li>
+<li>NH3</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h4 id="erweiterungen-1">Erweiterungen</h4>
+<p>2a. Es wird kein Input-Parameter mitgegeben: Der Import bricht mit einem Fehler ab.</p>
+<p>3a. Die API kann nicht abgefragt werden: Der Import bricht mit einem Fehler ab.</p>
+<hr>
+<h3 id="03-wetter-am-zeitpunktort-x-abrufen">03 - Wetter am Zeitpunkt/Ort X abrufen</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Ziel</strong></td>
+<td>Der User sieht auf einer Webseite die Wetter- und Luftqualitätsdaten für einen bestimmten Zeitpunkt</td>
+</tr>
+<tr>
+<td><strong>Akteure</strong></td>
+<td>User</td>
+</tr>
+<tr>
+<td><strong>Auslöser</strong></td>
+<td>Der Benutzer ruft die Wetter-Infoseite auf</td>
+</tr>
+<tr>
+<td><strong>Nachbedingung</strong></td>
+<td>-</td>
+</tr>
+</tbody>
+</table>
+<h4 id="essentielle-schritte-2">Essentielle Schritte</h4>
+<ol>
+<li>
+<p>Der Benutzer ruft die Daten-Abrufseite auf.</p>
+</li>
+<li>
+<p>Der Benutzer wählt den Ort (PLZ) aus einer vorgefertigten Liste aus</p>
+</li>
+<li>
+<p>Der Benutzer wählt ein Datum und eine Zeit</p>
+</li>
+<li>
+<p>Der Benutzer klickt auf &quot;Daten laden&quot; (o.ä.)</p>
+</li>
+<li>
+<p>Die Webseite fragt die Daten vom Server ab und stellt die Daten
+für den gewählten Zeitpunkt tabellarisch dar. Es werden sowohl
+Wetter- wie auch Luftqualitätsdaten ausgegeben, und zwar folgende Werte:<br>
+<strong>Wetter</strong>:<br></p>
+<ul>
+<li>Zeitstempel der Messung</li>
+<li>Land</li>
+<li>PLZ, Ort</li>
+<li>Koordinaten</li>
+<li>Wetter-Beschreibung, auf Deutsch</li>
+<li>Icon</li>
+<li>Temperatur aktuell, Tages-Minimum/Maximum, in °C <strong>und</strong> in °F</li>
+<li>gefühlte Temperatur, in °C <strong>und</strong> in °F</li>
+<li>Luftdruck, Luftfeuchtigkeit</li>
+<li>Angaben zum Wind</li>
+<li>Sonnen-Auf- und Untergangszeit</li>
+</ul>
+<p><strong>Luft:</strong><br></p>
+<ul>
+<li>Zeitstempel der Messung</li>
+<li>Land</li>
+<li>PLZ, Ort</li>
+<li>Luftqualitäts-Index</li>
+<li>Partikelzahlen (ug/m3) für:
+<ul>
+<li>CO</li>
+<li>NO</li>
+<li>NO2</li>
+<li>O3</li>
+<li>SO2</li>
+<li>PM2_5</li>
+<li>PM10</li>
+<li>NH3</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h4 id="erweiterungen-2">Erweiterungen</h4>
+<p>3a. Der Benutzer wählt kein Datum/Zeit: Als Vorgabe ist das aktuelle Datum / die aktuelle Zeit abgefüllt.</p>
+<p>5a. Für den gewählten Zeitpunkt (+/- 30min) sind keine Wetter- und/oder Luft-Daten vorhanden. Die Webseite zeigt dies mit einer Fehlermeldung an.</p>
+<hr>
+<h3 id="04-durchschnittswerte-zwischen-2-daten-abrufen">04 - Durchschnittswerte zwischen 2 Daten abrufen</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Ziel</strong></td>
+<td>Der User sieht auf einer Webseite die Durchschnitts-Wetter- und Luftqualitätsdaten über einen definierten Zeitraum</td>
+</tr>
+<tr>
+<td><strong>Akteure</strong></td>
+<td>User</td>
+</tr>
+<tr>
+<td><strong>Auslöser</strong></td>
+<td>Der Benutzer ruft die Wetter-Durchschnitts-Seite auf</td>
+</tr>
+<tr>
+<td><strong>Nachbedingung</strong></td>
+<td>-</td>
+</tr>
+</tbody>
+</table>
+<h4 id="essentielle-schritte-3">Essentielle Schritte</h4>
+<ol>
+<li>
+<p>Der Benutzer ruft die Durchschnitts-Daten-Abrufseite auf.</p>
+</li>
+<li>
+<p>Der Benutzer wählt den Ort (PLZ) aus einer vorgefertigten Liste aus</p>
+</li>
+<li>
+<p>Der Benutzer wählt ein Start-Datum und eine Zeit</p>
+</li>
+<li>
+<p>Der Benutzer wählt ein End-Datum und eine Zeit</p>
+</li>
+<li>
+<p>Der Benutzer klickt auf &quot;Daten laden&quot; (o.ä.)</p>
+</li>
+<li>
+<p>Die Webseite fragt die Daten vom Server ab und stellt die Daten
+für den gewählten Zeitraum tabellarisch dar. Es werden Durchschnittswerte im gewählten Zeitraum von sowohl Wetter- wie auch Luftqualitätsdaten ausgegeben, und zwar folgende Werte:<br>
+<strong>Wetter</strong>:<br></p>
+<ul>
+<li>Zeitraum der Messungen</li>
+<li>Land</li>
+<li>PLZ, Ort</li>
+<li>Koordinaten</li>
+<li>Temperatur-Schnitt, in °C <strong>und</strong> in °F</li>
+<li>gefühlte Temperatur, in °C <strong>und</strong> in °F</li>
+<li>Luftdruck, Luftfeuchtigkeit</li>
+<li>Angaben zum Wind</li>
+</ul>
+<p><strong>Luft:</strong><br></p>
+<ul>
+<li>Zeitstempel der Messung</li>
+<li>Land</li>
+<li>PLZ, Ort</li>
+<li>Partikelzahlen (ug/m3) für:
+<ul>
+<li>CO</li>
+<li>NO</li>
+<li>NO2</li>
+<li>O3</li>
+<li>SO2</li>
+<li>PM2_5</li>
+<li>PM10</li>
+<li>NH3</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h4 id="erweiterungen-3">Erweiterungen</h4>
+<p>6a. Für den gewählten Zeitpunkt sind keine Wetter- und/oder Luft-Daten vorhanden. Die Webseite zeigt dies mit einer Fehlermeldung an.</p>
+
+        
+        
+    </body>
+    </html>

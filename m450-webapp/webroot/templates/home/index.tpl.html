@@ -1,0 +1,116 @@
+{% extends "base-layout.tpl.html" %}
+
+{% block content %}
+<div>Aktuelle Zeit: {{ now | date('d.m.Y H:i:s')}}</div>
+<div id="form">
+  <label for="plz">PLZ:</label>
+  <select id="plz" name="plz">
+    <option value="">-</option>
+    {% for zip in zips %}
+    <option value="{{ zip.zip }}">{{ zip.zip }} {{ zip.city }}</option>
+    {% endfor %}
+  </select>
+  <label for="date">Datum:</label>
+  <input type="date" id="date" name="date" value="{{ now | date('Y-m-d') }}" />
+  <label for="time">Zeit:</label>
+  <input type="time" id="time" name="time" value="{{ now | date('H:i') }}" />
+</div>
+<div id="buttons">
+  <button type="button" id="loadHistory">historische Daten laden</button>
+  <div>ODER</div>
+  <button type="button" id="loadLive">aktuelle Wetterdaten laden</button>
+</div>
+
+<div id="output">
+</div>
+{% endblock %}
+
+{% block pagestyle %}
+<style>
+  #form {
+    display: grid;
+    gap: 5px;
+    grid-template-rows: auto;
+    grid-template-columns: 150px minmax(100px, 300px);
+    grid-template-areas: "label field";
+  }
+
+  #buttons {
+    margin-top: 20px;
+  }
+
+  label {
+    margin-right: 5px;
+  }
+
+  .datatable {
+    border-collapse: collapse;
+    border: 1px solid #ddd;
+  }
+
+  .datatable td,
+  .datatable th {
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+  }
+</style>
+{% endblock %}
+
+{% block bodyscripts %}
+<script>
+  // Datenfelder:
+  const plzField = document.getElementById("plz");
+  const dateField = document.getElementById("date");
+  const timeField = document.getElementById("time");
+  const outputEl = document.getElementById("output");
+
+  // Click-Event History-Laden-Btn:
+  const histBtn = document.getElementById("loadHistory");
+  histBtn.addEventListener("click", async () => {
+    // Laden der Daten auf Btn-Klick auslösen.
+    histBtn.setAttribute("disabled", true);
+    const res = await loadHistoricWeather(
+      plzField.value,
+      dateField.value,
+      timeField.value
+    );
+    histBtn.removeAttribute("disabled");
+    outputEl.innerHTML = res;
+  });
+
+  // Click-Event Act-Laden-Btn:
+  const actBtn = document.getElementById("loadLive");
+  actBtn.addEventListener("click", async () => {
+    // Laden der Daten auf Btn-Klick auslösen.
+    actBtn.setAttribute("disabled", true);
+    const res = await loadActualWeather(
+      plzField.value,
+    );
+    actBtn.removeAttribute("disabled");
+    outputEl.innerHTML = res;
+  });
+
+
+  /**
+   * Lädt die gewünschten historischen Wetterdaten von der Backend-API:
+   */
+  async function loadHistoricWeather(zip, date, time) {
+    const apiUrl = "/weatherdataHtml";
+    const res = await fetch(`${apiUrl}?mode=historic&zip=${zip}&date=${date}&time=${time}`, {
+      method: "GET",
+    });
+    return await res.text();
+  }
+
+  /**
+   * Lädt die gewünschten Live-Wetterdaten von der Backend-API:
+   */
+  async function loadActualWeather(zip) {
+    const apiUrl = "/weatherdataHtml";
+    const res = await fetch(`${apiUrl}?mode=actual&zip=${zip}`, {
+      method: "GET",
+    });
+    return await res.text();
+  }
+</script>
+{% endblock %}

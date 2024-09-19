@@ -1,0 +1,24 @@
+@startuml use-cases
+title "M450 - Use-Cases Wetter-App"
+left to right direction
+
+actor "User"
+actor "Zeit"
+
+rectangle "Wetter-App" {
+	usecase "01 - Wetterdaten von API\nimportieren" as import_weather
+	usecase "02 - Luftqualitätsdaten\nvon API importieren" as import_air
+	usecase "03 - Wetter am Zeitpunkt/Ort X abrufen" as data_point
+	usecase "04 - Durchschnittswerte zwischen\n2 Daten abrufen" as data_avg
+	usecase "05 - Tabellarische Tagesdaten\nzwischen 2 Daten abrufen" as data_table
+}
+
+Zeit -- import_weather
+Zeit -- import_air
+User -- import_weather
+User -- import_air
+User -- data_point
+User -- data_avg
+User -- data_table
+
+@enduml

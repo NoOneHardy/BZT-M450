@@ -1,0 +1,98 @@
+{% if weatherdata %}
+<h2>Wetterdaten</h2>
+<table class="datatable">
+  <tbody>
+    <tr>
+      <th>Ort</th>
+      <td>{{ weatherdata.zip }} {{ weatherdata.city }} ({{ weatherdata.latitude }} / {{ weatherdata.longitude }})</td>
+    </tr>
+    <tr>
+      <th>Zeit der Messung</th>
+      <td>{{ weatherdata.ts|date('d.m.Y H:i') }}</td>
+    </tr>
+    <tr>
+      <th>Das Wetter</th>
+      <td>
+        <img src="https://openweathermap.org/img/wn/{{weatherdata.icon}}@2x.png"> {{weatherdata.description}}, bei
+        {{weatherdata.temp}}°C, {{weatherdata.clouds_percentage}}% Bewölkung
+      </td>
+    </tr>
+    <tr>
+      <th>Temperaturen</th>
+      <td>Min: {{weatherdata.temp_min}}°C, Max: {{weatherdata.temp_max}}°C, gefühlt: {{weatherdata.temp_feels_like}}°C</td>
+    </tr>
+    <tr>
+      <th>Luftdruck</th>
+      <td>{{weatherdata.pressure}} hPa</td>
+    </tr>
+    <tr>
+      <th>Feuchtigkeit</th>
+      <td>{{weatherdata.humidity}}%</td>
+    </tr>
+    <tr>
+      <th>Wind</th>
+      <td>{{weatherdata.wind_speed}}m/s, {{weatherdata.wind_degree}}°, Spitze: {{weatherdata.wind_gust}}m/s</td>
+    </tr>
+    <tr>
+      <th>Sonnenaufgang</th>
+      <td>{{weatherdata.sunrise|date('H:i')}}</td>
+    </tr>
+    <tr>
+      <th>Sonnenuntergang</th>
+      <td>{{weatherdata.sunset|date('H:i')}}</td>
+    </tr>
+  </tbody>
+</table>
+{% endif %}
+
+{% if airdata %}
+<h2>Luftqualität</h2>
+<table class="datatable">
+  <tbody>
+    <tr>
+      <th>Ort</th>
+      <td>{{ airdata.zip }} {{ airdata.city }} ({{ airdata.latitude }} / {{ airdata.longitude }})</td>
+    </tr>
+    <tr>
+      <th>Zeit der Messung</th>
+      <td>{{ airdata.ts|date('d.m.Y H:i') }}</td>
+    </tr>
+    <tr>
+      <th>Qualitätsindex</th>
+      <td>{{airdata.air_quality_index}} ({{aqi_map[airdata.air_quality_index]|default('Unbekannt')}})</td>
+    </tr>
+    <tr>
+      <th>CO</th>
+      <td>{{airdata.co}}μg/m<sup>3</sup></td>
+    </tr>
+    <tr>
+      <th>NO</th>
+      <td>{{airdata.no2}}μg/m<sup>3</sup></td>
+    </tr>
+    <tr>
+      <th>NO<sub>2</sub></th>
+      <td>{{airdata.no}}μg/m<sup>3</sup></td>
+    </tr>
+    <tr>
+      <th>O<sub>3</sub></th>
+      <td>{{airdata.o3}}μg/m<sup>3</sup></td>
+    </tr>
+    <tr>
+      <th>So<sub>2</sub></th>
+      <td>{{airdata.so}}μg/m<sup>3</sup></td>
+    </tr>
+    <tr>
+      <th>PM<sub>2.5</sub></th>
+      <td>{{airdata.pm2_5}}μg/m<sup>3</sup></td>
+    </tr>
+    <tr>
+      <th>PM<sub>10</sub></th>
+      <td>{{airdata.pm10}}μg/m<sup>3</sup></td>
+    </tr>
+    <tr>
+      <th>NH<sub>3</sub></th>
+      <td>{{airdata.nh3}}μg/m<sup>3</sup></td>
+    </tr>
+  </tbody>
+</table>
+{% endif %}
