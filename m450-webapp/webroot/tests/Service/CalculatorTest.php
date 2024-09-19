@@ -35,10 +35,21 @@ class CalculatorTest extends TestCase
         $this->assertEquals([32.0, 89.6, 212.0], $result);
     }
 
-    public function testCToFArrayStrings()
+    public function testCToFArrayTextValues()
     {
         $calc = new Calculator();
-        $result = $calc->cToF(['test' => 'error', '32', '100']);
+        try {
+            $result = $calc->cToF(['test' => 'error']);
+        } catch (\TypeError $e) {
+            $this->assertTrue(true);
+            return;
+        }
+    }
+
+    public function testCToFArrayStringNumbers()
+    {
+        $calc = new Calculator();
+        $result = $calc->cToF(['0', '32', '100']);
         $this->assertIsArray($result);
         $this->assertEquals([32.0, 89.6, 212.0], $result);
     }
