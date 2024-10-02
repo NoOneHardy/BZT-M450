@@ -99,7 +99,7 @@ class HomeController
         $weatherdata = $stm->fetchAll(PDO::FETCH_ASSOC);
         // 1. Record aus Result extrahieren:
         if (!empty($weatherdata)) {
-            return $weatherdata;
+            return $weatherdata[0];
         }
         return [];
     }
@@ -161,6 +161,7 @@ class HomeController
 
     public function normalizeWeatherData(object $data): array
     {
+        echo $data;
         return [
             'ts' => date(DATE_W3C, $data->dt ?? null) ?: null,
             'city' => $data->name ?? null,
@@ -191,6 +192,7 @@ class HomeController
         $client = new Client();
         $apiResponse = $client->get($airPollutionApiUrl, [
             'query' => [
+                'zip' => "{$plz},{CH}",
                 'lat' => $latitude,
                 'lon' => $longitude,
                 'appid' => $apiKey,
@@ -244,6 +246,8 @@ class HomeController
         array $args
     ): ResponseInterface {
         $params = $this->getQueryParams($request);
+
+        $data = null;
 
         switch ($params['mode']) {
             case 'actual':
