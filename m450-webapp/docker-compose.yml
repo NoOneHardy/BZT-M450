@@ -5,7 +5,7 @@ services:
         build:
             context: ./docker/web
         ports:
-            - '${WEB_PORT:-8020}:80'
+            - '${WEB_PORT:-8021}:80'
         volumes:
             - ./webroot:/var/www/html
             - ./data:/data
