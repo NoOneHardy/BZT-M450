@@ -145,7 +145,7 @@ class HomeController
         $client = new Client();
         $apiResponse = $client->get($apiUrl, [
             'query' => [
-                'zip' => "{$zip},{CH}",
+                'zip' => "{$zip},CH",
                 'units' => $units,
                 'lang' => $lang,
                 'appid' => $apiKey,
@@ -161,7 +161,6 @@ class HomeController
 
     public function normalizeWeatherData(object $data): array
     {
-        echo $data;
         return [
             'ts' => date(DATE_W3C, $data->dt ?? null) ?: null,
             'city' => $data->name ?? null,
@@ -192,7 +191,6 @@ class HomeController
         $client = new Client();
         $apiResponse = $client->get($airPollutionApiUrl, [
             'query' => [
-                'zip' => "{$plz},{CH}",
                 'lat' => $latitude,
                 'lon' => $longitude,
                 'appid' => $apiKey,
