@@ -7,6 +7,8 @@ use GuzzleHttp\Client;
 use PDO;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Twig\Environment;
+use Twig\Loader\FilesystemLoader;
 
 
 /**
@@ -36,8 +38,8 @@ class HomeController
     public function index(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         // Set up Twig, the Template engine:
-        $loader = new \Twig\Loader\FilesystemLoader(__DIR__ . '/../../templates');
-        $twig = new \Twig\Environment($loader, [
+        $loader = new FilesystemLoader(__DIR__ . '/../../templates');
+        $twig = new Environment($loader, [
             'cache' => false,
         ]);
         $template = $twig->load('home/index.tpl.html');
@@ -245,26 +247,23 @@ class HomeController
     ): ResponseInterface {
         $params = $this->getQueryParams($request);
 
-        $data = null;
+        $data = match ($params['mode']) {
+            'actual' => $this->getCurrentData($params['zip']),
+            default => $this->getHistoricData($params),
+        };
 
-        switch ($params['mode']) {
-            case 'actual':
-                $data = $this->getCurrentData($params['zip']);
-                break;
-            case 'historic':
-            default:
-                $data = $this->getHistoricData($params);
-                break;
-        }
+        $response->getBody()->write($this->renderHTML($data));
+        return $response;
+    }
 
-        // Set up Twig, the Template engine:
-        $loader = new \Twig\Loader\FilesystemLoader(__DIR__ . '/../../templates');
-        $twig = new \Twig\Environment($loader, [
+    private function renderHTML(array $data): string {
+        $loader = new FilesystemLoader(__DIR__ . '/../../templates');
+        $twig = new Environment($loader, [
             'cache' => false,
         ]);
         $template = $twig->load('home/weatherdata.tpl.html');
 
-        $response->getBody()->write($template->render([
+        return $template->render([
             'weatherdata' => $data['weather'],
             'airdata' => $data['air'],
             'aqi_map' => [
@@ -274,7 +273,6 @@ class HomeController
                 4 => "Schlecht",
                 5 => "Sehr schlecht",
             ]
-        ]));
-        return $response;
+        ]);
     }
 }
