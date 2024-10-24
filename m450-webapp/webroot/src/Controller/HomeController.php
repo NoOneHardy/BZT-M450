@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Model\WeatherData;
 use App\Service\DB;
 use GuzzleHttp\Client;
 use PDO;
@@ -14,29 +15,27 @@ use Twig\Loader\FilesystemLoader;
 /**
  * Diese Controller-Klasse liefert die Demo-Webseite und die zugehörigen Endpoints für
  * die Wetter-Demo-App.
- * 
+ *
  * Dieser Controller ist ABSICHTLICH "grausam" programmiert:
- * 
+ *
  * - riesige, unübersichtliche Methode(n)
  * - kein Separation of Concern
  * - Config-Daten direkt im Code
- * - Spaghetti-Code 
+ * - Spaghetti-Code
  * - fast untestbar
- * 
- * 
+ *
+ *
  * Ziel ist, dass diese Klasse im Verlauf des Moduls M450 auseinandergenommen und testbar
  * gemacht wird.
- * 
+ *
  * @package App\Controller
  */
-class HomeController
-{
+class HomeController {
     /**
      * Liefert die Index (Home)-Seite aus: liefert das User-Interface mit dem HTML-Form
      * aus dem Template home/index.tpl.html
      */
-    public function index(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
-    {
+    public function index(ServerRequestInterface $req, ResponseInterface $response, array $args): ResponseInterface {
         // Set up Twig, the Template engine:
         $loader = new FilesystemLoader(__DIR__ . '/../../templates');
         $twig = new Environment($loader, [
@@ -58,8 +57,7 @@ class HomeController
         return $response;
     }
 
-    public function getQueryParams(ServerRequestInterface $request): array
-    {
+    public function getQueryParams(ServerRequestInterface $request): array {
         $params = $request->getQueryParams();
         return [
             'mode' => $params['mode'] ?? 'historic',
@@ -69,8 +67,7 @@ class HomeController
         ];
     }
 
-    public function getHistoricData(array $params): array
-    {
+    public function getHistoricData(array $params): array {
         $date = $params['date'];
         $time = $params['time'];
         $zip = $params['zip'];
@@ -83,8 +80,7 @@ class HomeController
         ];
     }
 
-    public function getHistoricWeatherData(string $timestamp, string $zip): array
-    {
+    public function getHistoricWeatherData(string $timestamp, string $zip): array {
         $db = DB::conn();
 
         $query = "SELECT * FROM weather WHERE zip = :zip
@@ -106,8 +102,7 @@ class HomeController
         return [];
     }
 
-    public function getHistoricAirData(string $timestamp, string $zip): array
-    {
+    public function getHistoricAirData(string $timestamp, string $zip): array {
         $db = DB::conn();
         $query = "SELECT * FROM air_pollution WHERE zip = :zip
         AND datetime(ts, 'localtime') >= datetime(:ts, '-900 second', 'localtime')
@@ -129,17 +124,19 @@ class HomeController
         return [];
     }
 
-    public function getCurrentData(string $zip): array
-    {
+    public function getCurrentData(string $zip): array {
         $weather = $this->getCurrentWeatherData($zip);
         return [
-            'weather' => $weather,
-            'air' => $this->getCurrentAirData($zip, $weather['latitude'], $weather['longitude'], $weather['city'])
+            'weather' => $weather->toArray(),
+            'air' => $this->getCurrentAirData(
+                $zip, $weather->getLatitude(),
+                $weather->getLongitude(),
+                $weather->getCity()
+            )
         ];
     }
 
-    public function getCurrentWeatherData(string $zip): array
-    {
+    public function getCurrentWeatherData(string $zip): WeatherData {
         $apiKey = getenv('OPENWEATHER_KEY');
         $apiUrl = 'https://api.openweathermap.org/data/2.5/weather';
         $lang = 'de';
@@ -155,38 +152,37 @@ class HomeController
         ]);
 
         if ($apiResponse->getStatusCode() === 200) {
-            $data = json_decode((string) $apiResponse->getBody());
+            $data = json_decode((string)$apiResponse->getBody());
             return $this->normalizeWeatherData($data);
         }
-        return [];
+        return new WeatherData();
     }
 
-    public function normalizeWeatherData(object $data): array
-    {
-        return [
-            'ts' => date(DATE_W3C, $data->dt ?? null) ?: null,
-            'city' => $data->name ?? null,
-            'longitude' => $data->coord->lon ?? null,
-            'latitude' => $data->coord->lat ?? null,
-            'description' => $data->weather[0]->description ?? null,
-            'icon' => $data->weather[0]->icon ?? null,
-            'temp' => $data->main->temp ?? null,
-            'temp_feels_like' => $data->main->feels_like ?? null,
-            'temp_min' => $data->main->temp_min ?? null,
-            'temp_max' => $data->main->temp_max ?? null,
-            'pressure' => $data->main->pressure ?? null,
-            'humidity' => $data->main->humidity ?? null,
-            'wind_speed' => $data->wind->speed ?? null,
-            'wind_degree' => $data->wind->deg ?? null,
-            'wind_gust' => $data->wind->gust ?? null,
-            'clouds_percentage' => $data->clouds->all ?? null,
-            'sunrise' => date(DATE_W3C, $data->sys->sunrise ?? 0),
-            'sunset' => date(DATE_W3C, $data->sys->sunset ?? 0),
-        ];
+    public function normalizeWeatherData(object $data): WeatherData {
+        $weatherData = new WeatherData();
+        $weatherData->setTs(date(DATE_W3C, $data->dt ?? null) ?: null);
+        $weatherData->setCity($data->name ?? null);
+        $weatherData->setLongitude($data->coord->lon ?? null);
+        $weatherData->setLatitude($data->coord->lat ?? null);
+        $weatherData->setDescription($data->weather[0]->description ?? null);
+        $weatherData->setIcon($data->weather[0]->icon ?? null);
+        $weatherData->setTemp($data->main->temp ?? null);
+        $weatherData->setTempFeelsLike($data->main->feels_like ?? null);
+        $weatherData->setTempMin($data->main->temp_min ?? null);
+        $weatherData->setTempMax($data->main->temp_max ?? null);
+        $weatherData->setPressure($data->main->pressure ?? null);
+        $weatherData->setHumidity($data->main->humidity ?? null);
+        $weatherData->setWindSpeed($data->wind->speed ?? null);
+        $weatherData->setWindDegree($data->wind->deg ?? null);
+        $weatherData->setWindGust($data->wind->gust ?? null);
+        $weatherData->setCloudsPercentage($data->clouds->all ?? null);
+        $weatherData->setSunrise(date(DATE_W3C, $data->sys->sunrise ?? 0));
+        $weatherData->setSunset(date(DATE_W3C, $data->sys->sunset ?? 0));
+
+        return $weatherData;
     }
 
-    public function getCurrentAirData(string $zip, string $latitude, string $longitude, string $city): array
-    {
+    public function getCurrentAirData(string $zip, string $latitude, string $longitude, string $city): array {
         $airPollutionApiUrl = 'http://api.openweathermap.org/data/2.5/air_pollution';
         $apiKey = getenv('OPENWEATHER_KEY');
 
@@ -200,14 +196,13 @@ class HomeController
         ]);
 
         if ($apiResponse->getStatusCode() === 200) {
-            $data = json_decode((string) $apiResponse->getBody());
+            $data = json_decode((string)$apiResponse->getBody());
             return $this->normalizeAirData($data, $zip, $latitude, $longitude, $city);
         }
         return [];
     }
 
-    public function normalizeAirData(object $data, string $zip, string $latitude, string $longitude, string $city): array
-    {
+    public function normalizeAirData(object $data, string $zip, string $latitude, string $longitude, string $city): array {
         return [
             'zip' => $zip,
             'city' => $city,
@@ -242,8 +237,8 @@ class HomeController
      */
     public function getWeatherDataHtml(
         ServerRequestInterface $request,
-        ResponseInterface $response,
-        array $args
+        ResponseInterface      $response,
+        array                  $args
     ): ResponseInterface {
         $params = $this->getQueryParams($request);
 
